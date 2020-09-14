@@ -8,6 +8,8 @@ services:
       - database
       - api
       - web
+    stdin_open: true
+    tty: true
     volumes:
       - ./docker/nginx/nginx.conf:/etc/nginx/nginx.template
     command:
@@ -21,6 +23,13 @@ services:
       - PROJECT_WEB_PORT=${PROJECT_WEB_PORT}
     ports:
       - "80:80"
+    external_links:
+      - api:api.loc
+      - web:web.loc
+    networks:
+      general:
+        aliases:
+          - nginx
 
   migration:
     build: ./docker/migrate
@@ -35,7 +44,9 @@ services:
     volumes:
       - ./app/api/migrations:/migrations
     environment:
-      - POSTGRES_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/${POSTGRES_DB}?sslmode=disable
+      - POSTGRES_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database.loc:5432/${POSTGRES_DB}?sslmode=disable
+    external_links:
+      - database:database.loc
     networks:
       general:
         aliases:
@@ -54,6 +65,8 @@ services:
       - ./app/web:/go/src/app
     environment:
       - PROJECT_WEB_PORT=${PROJECT_WEB_PORT}
+    external_links:
+      - database:database.loc
     networks:
       general:
         aliases:
@@ -71,6 +84,8 @@ services:
       - ./app/api:/go/src/app
     environment:
       - PROJECT_API_PORT=${PROJECT_API_PORT}
+    external_links:
+      - database:database.loc
     networks:
       general:
         aliases:

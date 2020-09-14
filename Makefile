@@ -5,6 +5,9 @@ run: docker-down docker-up
 copy-env:
 	cp .env.dist .env
 
+docker-show:
+	docker ps -a
+
 docker-up:
 	docker-compose up --build -d
 
