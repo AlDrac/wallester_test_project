@@ -1,1 +1,1 @@
-# wallister_test_project
+# Wallister test project
