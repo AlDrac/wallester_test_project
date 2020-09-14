@@ -1,0 +1,96 @@
+version: '3.2'
+
+services:
+  nginx:
+    image: nginx
+    container_name: nginx
+    depends_on:
+      - database
+      - api
+      - web
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.template
+    command:
+      [
+          "/bin/bash",
+          "-c",
+          "export PROJECT_API_PORT && export PROJECT_WEB_PORT && envsubst '$$PROJECT_API_PORT $$PROJECT_WEB_PORT' < /etc/nginx/nginx.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
+      ]
+    environment:
+      - PROJECT_API_PORT=${PROJECT_API_PORT}
+      - PROJECT_WEB_PORT=${PROJECT_WEB_PORT}
+    ports:
+      - "80:80"
+
+  migration:
+    build: ./docker/migrate
+    container_name: migration
+    depends_on:
+      - database
+      - api
+      - web
+    stdin_open: true
+    tty: true
+    working_dir: /migrations
+    volumes:
+      - ./app/api/migrations:/migrations
+    environment:
+      - POSTGRES_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/${POSTGRES_DB}?sslmode=disable
+    networks:
+      general:
+        aliases:
+          - migration
+
+  web:
+    image: golang
+    container_name: web
+    depends_on:
+      - database
+      - api
+    stdin_open: true
+    tty: true
+    working_dir: /go/src/app
+    volumes:
+      - ./app/web:/go/src/app
+    environment:
+      - PROJECT_WEB_PORT=${PROJECT_WEB_PORT}
+    networks:
+      general:
+        aliases:
+          - web
+
+  api:
+    image: golang
+    container_name: api
+    depends_on:
+      - database
+    stdin_open: true
+    tty: true
+    working_dir: /go/src/app
+    volumes:
+      - ./app/api:/go/src/app
+    environment:
+      - PROJECT_API_PORT=${PROJECT_API_PORT}
+    networks:
+      general:
+        aliases:
+          - api
+
+  database:
+    image: postgres
+    container_name: database
+    volumes:
+      - ./docker/postgres/data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    networks:
+      general:
+        aliases:
+          - database
+
+networks:
+  general:

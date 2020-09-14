@@ -1,2 +1,9 @@
 # GoLand IDE
 .idea
+
+# ENV file
+.env
+
+# TEMP folders
+docker/postgres/data
+docker/postgres/data/*
