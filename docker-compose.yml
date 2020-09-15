@@ -45,6 +45,7 @@ services:
       - ./app/api/migrations:/migrations
     environment:
       - POSTGRES_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database.loc:5432/${POSTGRES_DB}?sslmode=disable
+      - POSTGRES_URL_TEST=postgres://${POSTGRES_USER_TEST}:${POSTGRES_PASSWORD_TEST}@database.loc:5432/${POSTGRES_DB_TEST}?sslmode=disable
     external_links:
       - database:database.loc
     networks:
@@ -104,7 +105,7 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_DB_TEST=${POSTGRES_DB_TEST}
     ports:
-      - "5432:5432"
+      - "${DATABASE_EXTERNAL_PORT}:5432"
     networks:
       general:
         aliases:

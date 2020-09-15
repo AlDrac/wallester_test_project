@@ -6,5 +6,8 @@ build:
 start:
 	./bin/api
 
+run-tests:
+	go test -v -race -timeout 30s ./tests/...
+
 .DEFAULT_GOAL := run
-.PHONY: run build start
+.PHONY: run build start run-tests

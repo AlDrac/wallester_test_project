@@ -14,7 +14,7 @@ docker-up:
 	docker-compose up --build -d
 
 docker-up-dev:
-	docker-compose up -f docker-compose.yml -f docker-compose-dev.yml --build -d
+	docker-compose -f docker-compose.yml -f docker-compose-dev.yml up --build -d
 
 docker-down:
 	docker-compose down -v --remove-orphans
