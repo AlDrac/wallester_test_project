@@ -20,7 +20,7 @@ docker-down:
 	docker-compose down -v --remove-orphans
 
 docker-bash-api:
-	docker-compose exec -u 1000:1000 api bash
+	docker-compose exec -u 0:0 api bash
 
 docker-bash-web:
 	docker-compose exec -u 1000:1000 web bash

@@ -1,0 +1,9 @@
+database:
+  url: "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database.loc:5432/${POSTGRES_DB}?sslmode=disable"
+  url_test: "postgres://${POSTGRES_USER_TEST}:${POSTGRES_PASSWORD_TEST}@database.loc:5432/${POSTGRES_DB_TEST}?sslmode=disable"
+
+http:
+  port: "${HTTP_PORT}"
+
+logger:
+  level: "${LOGGER_LEVEL}"
