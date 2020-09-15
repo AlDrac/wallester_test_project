@@ -2,6 +2,8 @@ init: copy-env run
 
 run: docker-down docker-up
 
+run-dev: docker-down docker-up-dev
+
 copy-env:
 	cp .env.dist .env
 
@@ -10,6 +12,9 @@ docker-show:
 
 docker-up:
 	docker-compose up --build -d
+
+docker-up-dev:
+	docker-compose up -f docker-compose.yml -f docker-compose-dev.yml --build -d
 
 docker-down:
 	docker-compose down -v --remove-orphans
@@ -24,4 +29,4 @@ docker-bash-migration:
 	docker-compose exec -u 0:0 migration bash
 
 .DEFAULT_GOAL := init
-.PHONY:init run copy-env docker-up docker-down docker-bash-api docker-bash-web docker-bash-migration
+.PHONY: init run run-dev copy-env docker-up docker-up-dev docker-down docker-bash-api docker-bash-web docker-bash-migration

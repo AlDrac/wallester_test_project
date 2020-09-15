@@ -1,0 +1,6 @@
+version: '3.2'
+
+services:
+  database:
+    volumes:
+      - ./docker/postgres/data:/var/lib/postgresql/data
