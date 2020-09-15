@@ -20,13 +20,13 @@ docker-down:
 	docker-compose down -v --remove-orphans
 
 docker-bash-api:
-	docker-compose exec -u 0:0 api bash
+	docker-compose exec -u 1000:1000 api bash
 
 docker-bash-web:
-	docker-compose exec -u 0:0 web bash
+	docker-compose exec -u 1000:1000 web bash
 
 docker-bash-migration:
-	docker-compose exec -u 0:0 migration bash
+	docker-compose exec -u 1000:1000 migration bash
 
 .DEFAULT_GOAL := init
 .PHONY: init run run-dev copy-env docker-up docker-up-dev docker-down docker-bash-api docker-bash-web docker-bash-migration

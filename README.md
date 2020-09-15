@@ -4,7 +4,7 @@ A Golang v1.14 project created on September 11, 2020
 
 ### Start
 
-- to run the project enter make into the console
+- to run the project enter `make` into the console
 ```bash
 make
 ```
@@ -12,7 +12,7 @@ make
 ### Migration
 - enter the container to work with migrations
 ```bash
-docker-compose exec -u 0:0 migration bash
+docker-compose exec -u 1000:1000 migration bash
 ```
 or
 ```bash
