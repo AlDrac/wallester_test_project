@@ -16,7 +16,10 @@ services:
       [
           "/bin/bash",
           "-c",
-          "export PROJECT_API_PORT && export PROJECT_WEB_PORT && envsubst '$$PROJECT_API_PORT $$PROJECT_WEB_PORT' < /etc/nginx/nginx.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
+          "export PROJECT_API_PORT &&
+          export PROJECT_WEB_PORT &&
+          envsubst '$$PROJECT_API_PORT $$PROJECT_WEB_PORT' < /etc/nginx/nginx.template > /etc/nginx/nginx.conf &&
+          nginx -g 'daemon off;'"
       ]
     environment:
       - PROJECT_API_PORT=${PROJECT_API_PORT}
@@ -43,6 +46,15 @@ services:
     working_dir: /migrations
     volumes:
       - ./app/api/migrations:/migrations
+    command:
+      [
+        "/bin/bash",
+        "-c",
+        "sleep 5 &&
+        migrate -path . -database $$POSTGRES_URL up &&
+        migrate -path test -database $$POSTGRES_URL_TEST up &&
+        tail -F anything"
+      ]
     environment:
       - POSTGRES_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database.loc:5432/${POSTGRES_DB}?sslmode=disable
       - POSTGRES_URL_TEST=postgres://${POSTGRES_USER_TEST}:${POSTGRES_PASSWORD_TEST}@database.loc:5432/${POSTGRES_DB_TEST}?sslmode=disable
