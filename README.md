@@ -1,4 +1,4 @@
-Wallister test project
+Wallester test project
 =
 A Golang v1.14 project created on September 11, 2020
 
