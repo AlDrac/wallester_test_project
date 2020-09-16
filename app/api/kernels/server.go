@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/AlDrac/wallister_test_project/app/api/routers"
-	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,8 +16,10 @@ type server struct {
 func initialiseServer(logger *logrus.Logger, database *sql.DB) *server {
 	server := &server{
 		logger,
-		routers.InitialiseRouter(),
+		routers.InitialiseRouter(database),
 	}
+
+	server.router.GetRouterHandlers()
 
 	return server
 }
