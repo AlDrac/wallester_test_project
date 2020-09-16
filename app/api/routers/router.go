@@ -5,26 +5,30 @@ import (
 	"net/http"
 
 	"github.com/AlDrac/wallister_test_project/app/api/controllers"
+	"github.com/AlDrac/wallister_test_project/app/api/repositories/postgres"
 	"github.com/gorilla/mux"
-	_ "github.com/lib/pq"
 )
 
 type Router struct {
 	*mux.Router
-	database *sql.DB
+	controllers.Controller
 }
 
-func InitialiseRouter(database *sql.DB) *Router {
+func InitialiseRouter(db *sql.DB) *Router {
 	return &Router{
 		mux.NewRouter(),
-		database,
+		controllers.InitialiseController(
+			postgres.InitialiseRepository(db),
+		),
 	}
 }
 
 func (router *Router) GetRouterHandlers() {
 	customerController := controllers.Customer
+	customerController.Controller = router.Controller
+
 	router.HandleFunc(
-		"/customers}",
+		"/customers",
 		customerController.Handler(customerController.Index),
 	).Methods(http.MethodGet)
 	router.HandleFunc(

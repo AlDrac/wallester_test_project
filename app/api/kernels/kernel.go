@@ -2,9 +2,10 @@ package kernels
 
 import (
 	"database/sql"
+	"log"
+
 	"github.com/AlDrac/wallister_test_project/app/api/configs"
 	"github.com/sirupsen/logrus"
-	"log"
 )
 
 type kernel struct {
@@ -18,14 +19,13 @@ func Initialise(config *configs.Config) (*kernel, error) {
 		return nil, err
 	}
 
-	database, err := initialiseDatabase(config.Database.Url)
+	db, err := initialiseDatabase(config.Database.Url)
 	if err != nil {
 		return nil, err
 	}
-	defer closeDatabase(database, &err)
 
 	return &kernel{
-		server: initialiseServer(logger, database),
+		server: initialiseServer(logger, db),
 		port:   config.Http.Port,
 	}, nil
 }
@@ -48,21 +48,14 @@ func initialiseLogger(level string) (*logrus.Logger, error) {
 }
 
 func initialiseDatabase(url string) (*sql.DB, error) {
-	database, err := sql.Open("postgres", url)
+	db, err := sql.Open("postgres", url)
 	if err != nil {
 		return nil, err
 	}
 
-	if err := database.Ping(); err != nil {
+	if err := db.Ping(); err != nil {
 		return nil, err
 	}
 
-	return database, nil
-}
-
-func closeDatabase(database *sql.DB, err *error) {
-	closeErr := database.Close()
-	if *err == nil {
-		*err = closeErr
-	}
+	return db, nil
 }

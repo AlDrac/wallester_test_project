@@ -9,14 +9,16 @@ import (
 )
 
 type server struct {
+	db     *sql.DB
 	logger *logrus.Logger
 	router *routers.Router
 }
 
-func initialiseServer(logger *logrus.Logger, database *sql.DB) *server {
+func initialiseServer(logger *logrus.Logger, db *sql.DB) *server {
 	server := &server{
+		db,
 		logger,
-		routers.InitialiseRouter(database),
+		routers.InitialiseRouter(db),
 	}
 
 	server.router.GetRouterHandlers()
@@ -25,6 +27,7 @@ func initialiseServer(logger *logrus.Logger, database *sql.DB) *server {
 }
 
 func (server *server) StartServer(port string) error {
+	defer server.db.Close()
 	server.logger.Info("The server is running on port " + port)
 	return http.ListenAndServe(":"+port, server)
 }
