@@ -9,6 +9,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
+const version = "/v1"
+
 type Router struct {
 	*mux.Router
 	controllers.Controller
@@ -28,11 +30,11 @@ func (router *Router) GetRouterHandlers() {
 	customerController.Controller = router.Controller
 
 	router.HandleFunc(
-		"/customers",
+		version+"/customers",
 		customerController.Handler(customerController.Index),
 	).Methods(http.MethodGet)
 	router.HandleFunc(
-		"/customer/{id:[0-9+]}",
+		version+"/customer/{id:[0-9+]}",
 		customerController.Handler(customerController.GetCustomer),
 	).Methods(http.MethodGet)
 }

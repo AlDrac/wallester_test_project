@@ -1,8 +1,10 @@
 package controllers
 
 import (
-	"github.com/AlDrac/wallister_test_project/app/api/repositories"
 	"net/http"
+
+	"github.com/AlDrac/wallister_test_project/app/api/repositories"
+	"github.com/darahayes/go-boom"
 )
 
 type Action func(writer http.ResponseWriter, request *http.Request) error
@@ -20,7 +22,7 @@ func InitialiseController(repository repositories.Repository) Controller {
 func (c *Controller) Handler(action Action) http.HandlerFunc {
 	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 		if err := action(writer, request); err != nil {
-			http.Error(writer, err.Error(), http.StatusInternalServerError)
+			boom.Internal(writer, err)
 		}
 	})
 }
