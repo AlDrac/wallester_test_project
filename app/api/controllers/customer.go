@@ -14,7 +14,7 @@ type CustomerController struct {
 
 var Customer CustomerController
 
-func (c CustomerController) Index(writer http.ResponseWriter, request *http.Request) error {
+func (c CustomerController) GetCustomers(writer http.ResponseWriter, request *http.Request) error {
 	customers, err := c.repository.Customer().Get(request.URL.Query())
 	if err != nil {
 		return err
@@ -51,6 +51,21 @@ func (c CustomerController) GetCustomer(writer http.ResponseWriter, request *htt
 	if err = c.responseJson(writer, string(body)); err != nil {
 		return err
 	}
+
+	return nil
+}
+
+func (c CustomerController) Create(writer http.ResponseWriter, request *http.Request) error {
+
+	return nil
+}
+
+func (c CustomerController) Edit(writer http.ResponseWriter, request *http.Request) error {
+
+	return nil
+}
+
+func (c CustomerController) Delete(writer http.ResponseWriter, request *http.Request) error {
 
 	return nil
 }

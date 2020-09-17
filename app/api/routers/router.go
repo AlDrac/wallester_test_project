@@ -33,7 +33,7 @@ func (router *Router) GetRouterHandlers() {
 
 	router.HandleFunc(
 		version+"/customers",
-		customerController.Handler(customerController.Index),
+		customerController.Handler(customerController.GetCustomers),
 	).Methods(http.MethodGet)
 	router.HandleFunc(
 		version+"/customer/{id:[0-9]+}",
