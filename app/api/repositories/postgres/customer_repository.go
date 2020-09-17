@@ -18,9 +18,9 @@ func (r *CustomerRepository) Create(customer *models.Customer) error {
 	}
 
 	return r.repository.db.QueryRow(
-		"INSERT INTO customers ("+
-			"first_name, last_name, birth_date, gender, email, encrypted_password, address) "+
-			"VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING id",
+		"INSERT INTO customers c ("+
+			"c.first_name, c.last_name, c.birth_date, c.gender, c.email, c.encrypted_password, c.address) "+
+			"VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING id;",
 		customer.FirstName,
 		customer.LastName,
 		customer.BirthDate,
@@ -31,12 +31,51 @@ func (r *CustomerRepository) Create(customer *models.Customer) error {
 	).Scan(&customer.ID)
 }
 
+func (r *CustomerRepository) Edit(customer *models.Customer) error {
+	if err := customer.BeforeCreate(); err != nil {
+		return err
+	}
+
+	_, err := r.repository.db.Exec(
+		"UPDATE customers c SET "+
+			"c.first_name = $2, c.last_name = $3, c.birth_date = $4, c.gender = $5, c.email = $6, c.address = $7 "+
+			"WHERE c.id = $1;",
+		customer.ID,
+		customer.FirstName,
+		customer.LastName,
+		customer.BirthDate,
+		customer.Gender,
+		customer.Email,
+		customer.Address,
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *CustomerRepository) Delete(id int) error {
+	_, err := r.repository.db.Exec(
+		"UPDATE customers c SET "+
+			"c.active = false "+
+			"WHERE c.id = $1;",
+		id,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (r *CustomerRepository) Get(values url.Values) ([]models.Customer, error) {
 	firstName := values.Get("first_name")
 	lastName := values.Get("last_name")
 
 	rows, err := r.repository.db.Query(
-		"SELECT id, first_name, last_name, birth_date, gender, email, encrypted_password, address, active, registration_date " +
+		"SELECT c.id, c.first_name, c.last_name, c.birth_date, c.gender, c.email, c.encrypted_password, c.address, c.active, c.registration_date " +
 			"FROM customers c " +
 			"WHERE c.active = true " +
 			"AND lower(c.first_name) SIMILAR TO '%" + firstName + "%' " +
@@ -74,7 +113,7 @@ func (r *CustomerRepository) Get(values url.Values) ([]models.Customer, error) {
 func (r *CustomerRepository) GetById(id int) (*models.Customer, error) {
 	c := &models.Customer{}
 	if err := r.repository.db.QueryRow(
-		"SELECT id, first_name, last_name, birth_date, gender, email, encrypted_password, address, active, registration_date "+
+		"SELECT c.id, c.first_name, c.last_name, c.birth_date, c.gender, c.email, c.encrypted_password, c.address, c.active, c.registration_date "+
 			"FROM customers c "+
 			"WHERE c.active = true "+
 			"AND c.id = $1",
