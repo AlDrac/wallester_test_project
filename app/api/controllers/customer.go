@@ -15,7 +15,7 @@ type CustomerController struct {
 var Customer CustomerController
 
 func (c CustomerController) Index(writer http.ResponseWriter, request *http.Request) error {
-	customers, err := c.repository.Customer().Get()
+	customers, err := c.repository.Customer().Get(request.URL.Query())
 	if err != nil {
 		return err
 	}
