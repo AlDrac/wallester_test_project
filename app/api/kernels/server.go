@@ -18,7 +18,7 @@ func initialiseServer(logger *logrus.Logger, db *sql.DB) *server {
 	server := &server{
 		db,
 		logger,
-		routers.InitialiseRouter(db),
+		routers.InitialiseRouter(db, logger),
 	}
 
 	server.router.GetRouterHandlers()

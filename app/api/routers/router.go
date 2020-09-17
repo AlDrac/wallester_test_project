@@ -2,6 +2,7 @@ package routers
 
 import (
 	"database/sql"
+	"github.com/sirupsen/logrus"
 	"net/http"
 
 	"github.com/AlDrac/wallister_test_project/app/api/controllers"
@@ -16,11 +17,12 @@ type Router struct {
 	controllers.Controller
 }
 
-func InitialiseRouter(db *sql.DB) *Router {
+func InitialiseRouter(db *sql.DB, logger *logrus.Logger) *Router {
 	return &Router{
 		mux.NewRouter(),
 		controllers.InitialiseController(
 			postgres.InitialiseRepository(db),
+			logger,
 		),
 	}
 }
@@ -34,7 +36,11 @@ func (router *Router) GetRouterHandlers() {
 		customerController.Handler(customerController.Index),
 	).Methods(http.MethodGet)
 	router.HandleFunc(
-		version+"/customer/{id:[0-9+]}",
+		version+"/customer/{id:[0-9]+}",
 		customerController.Handler(customerController.GetCustomer),
 	).Methods(http.MethodGet)
+
+	notFoundController := controllers.NotFound
+	notFoundController.Controller = router.Controller
+	router.NotFoundHandler = notFoundController.Handler(notFoundController.Index)
 }

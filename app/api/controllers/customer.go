@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"fmt"
+	"encoding/json"
 	"net/http"
 	"strconv"
 
@@ -15,8 +15,19 @@ type CustomerController struct {
 var Customer CustomerController
 
 func (c CustomerController) Index(writer http.ResponseWriter, request *http.Request) error {
-	writer.Header().Set("Content-Type", "application/json")
-	writer.Write([]byte("\"Name\":\"Alex\", Hobbies\":[\"snowboarding\",\"programming\"]}"))
+	customers, err := c.repository.Customer().Get()
+	if err != nil {
+		return err
+	}
+
+	body, err := json.Marshal(customers)
+	if err != nil {
+		return err
+	}
+
+	if err = c.responseJson(writer, string(body)); err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -27,10 +38,19 @@ func (c CustomerController) GetCustomer(writer http.ResponseWriter, request *htt
 		return err
 	}
 
-	fmt.Println(c.repository.Customer().GetById(id))
+	customer, err := c.repository.Customer().GetById(id)
+	if err != nil {
+		return err
+	}
 
-	writer.Header().Set("Content-Type", "application/json")
-	writer.Write([]byte("{\"Id\": " + mux.Vars(request)["id"] + ", \"Name\":\"Alex\", Hobbies\":[\"snowboarding\",\"programming\"]}"))
+	body, err := json.Marshal(customer)
+	if err != nil {
+		return err
+	}
+
+	if err = c.responseJson(writer, string(body)); err != nil {
+		return err
+	}
 
 	return nil
 }
