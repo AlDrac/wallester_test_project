@@ -13,6 +13,10 @@ type CustomerRepository struct {
 }
 
 func (r *CustomerRepository) Create(customer *models.Customer) error {
+	if err := customer.BeforeCreate(); err != nil {
+		return err
+	}
+
 	return r.repository.db.QueryRow(
 		"INSERT INTO customers ("+
 			"first_name, last_name, birth_date, gender, email, encrypted_password, address) "+
@@ -92,5 +96,6 @@ func (r *CustomerRepository) GetById(id int) (*models.Customer, error) {
 		}
 		return nil, err
 	}
+
 	return c, nil
 }
