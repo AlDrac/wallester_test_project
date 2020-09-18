@@ -19,4 +19,5 @@ type CustomerRepository interface {
 	Delete(*RequestId) error
 	Get(*RequestSearch) ([]models.Customer, error)
 	GetById(*RequestId) (*models.Customer, error)
+	GetByEmail(string) (*models.Customer, error)
 }

@@ -36,14 +36,18 @@ func (r *CustomerRepository) Create(customer *models.Customer) error {
 }
 
 func (r *CustomerRepository) Edit(customer *models.Customer) error {
-	if err := customer.BeforeCreate(); err != nil {
+	if err := customer.BeforeEdit(); err != nil {
 		return err
 	}
 
+	if err := r.isExist(customer.Email, customer.ID); err != repositories.ErrRecordNotFound {
+		return repositories.ErrRecordExist
+	}
+
 	_, err := r.repository.db.Exec(
-		"UPDATE customers c SET "+
-			"c.first_name = $2, c.last_name = $3, c.birth_date = $4, c.gender = $5, c.email = $6, c.address = $7 "+
-			"WHERE c.id = $1;",
+		"UPDATE customers SET "+
+			"first_name = $2, last_name = $3, birth_date = $4, gender = $5, email = $6, address = $7 "+
+			"WHERE id = $1;",
 		customer.ID,
 		customer.FirstName,
 		customer.LastName,
@@ -80,7 +84,7 @@ func (r *CustomerRepository) Get(req *repositories.RequestSearch) ([]models.Cust
 			"FROM customers c " +
 			"WHERE c.active = true " +
 			"AND lower(c.first_name) SIMILAR TO '%" + req.FirstName + "%' " +
-			"AND lower(c.last_name) SIMILAR TO '%" + req.LastName + "%'",
+			"AND lower(c.last_name) SIMILAR TO '%" + req.LastName + "%';",
 	)
 	if err != nil {
 		return nil, err
@@ -117,7 +121,7 @@ func (r *CustomerRepository) GetById(req *repositories.RequestId) (*models.Custo
 		"SELECT c.id, c.first_name, c.last_name, c.birth_date, c.gender, c.email, c.encrypted_password, c.address, c.active, c.registration_date "+
 			"FROM customers c "+
 			"WHERE c.active = true "+
-			"AND c.id = $1",
+			"AND c.id = $1;",
 		req.Id,
 	).Scan(
 		&c.ID,
@@ -145,7 +149,7 @@ func (r *CustomerRepository) GetByEmail(email string) (*models.Customer, error) 
 	if err := r.repository.db.QueryRow(
 		"SELECT c.id, c.first_name, c.last_name, c.birth_date, c.gender, c.email, c.encrypted_password, c.address, c.active, c.registration_date "+
 			"FROM customers c "+
-			"WHERE c.email = $1",
+			"WHERE c.email = $1;",
 		email,
 	).Scan(
 		&c.ID,
@@ -166,4 +170,16 @@ func (r *CustomerRepository) GetByEmail(email string) (*models.Customer, error) 
 	}
 
 	return c, nil
+}
+
+func (r *CustomerRepository) isExist(email string, id int) error {
+	var cId int
+	if err := r.repository.db.QueryRow("SELECT c.id FROM customers c WHERE c.email = $1 AND c.id != $2;",
+		email,
+		id,
+	).Scan(&cId); err != nil && err == sql.ErrNoRows {
+		return repositories.ErrRecordNotFound
+	}
+
+	return nil
 }

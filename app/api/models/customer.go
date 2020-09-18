@@ -41,6 +41,18 @@ func (customer *Customer) Validate() error {
 	)
 }
 
+func (customer *Customer) ValidateEdit() error {
+	return validation.ValidateStruct(
+		customer,
+		validation.Field(&customer.FirstName, validation.Required, validation.Length(1, 100)),
+		validation.Field(&customer.LastName, validation.Required, validation.Length(1, 100)),
+		validation.Field(&customer.BirthDate, validation.Required, validation.By(validations.AgeRange(18, 60))),
+		validation.Field(&customer.Gender, validation.Required, validation.In(female, male)),
+		validation.Field(&customer.Email, validation.Required, is.Email),
+		validation.Field(&customer.Address, validation.Length(0, 200)),
+	)
+}
+
 func (customer *Customer) BeforeCreate() error {
 	if err := customer.Validate(); err != nil {
 		return err
@@ -53,6 +65,14 @@ func (customer *Customer) BeforeCreate() error {
 		}
 
 		customer.EncryptedPassword = enc
+	}
+
+	return nil
+}
+
+func (customer *Customer) BeforeEdit() error {
+	if err := customer.ValidateEdit(); err != nil {
+		return err
 	}
 
 	return nil

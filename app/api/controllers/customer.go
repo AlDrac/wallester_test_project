@@ -67,6 +67,19 @@ func (c CustomerController) Create(writer http.ResponseWriter, request *http.Req
 }
 
 func (c CustomerController) Edit(writer http.ResponseWriter, request *http.Request) error {
+	req := &models.Customer{}
+	req.ID, _ = strconv.Atoi(mux.Vars(request)["id"])
+	if err := json.NewDecoder(request.Body).Decode(req); err != nil {
+		return err
+	}
+
+	if err := c.repository.Customer().Edit(req); err != nil {
+		return err
+	}
+
+	if err := c.responseJson(writer, "", http.StatusOK); err != nil {
+		return err
+	}
 
 	return nil
 }
