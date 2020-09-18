@@ -2,13 +2,21 @@ package repositories
 
 import (
 	"github.com/AlDrac/wallister_test_project/app/api/models"
-	"net/url"
 )
 
+type RequestId struct {
+	Id int `json:"id"`
+}
+
+type RequestSearch struct {
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+}
+
 type CustomerRepository interface {
-	Create(customer *models.Customer) error
-	Edit(customer *models.Customer) error
-	Delete(int) error
-	Get(values url.Values) ([]models.Customer, error)
-	GetById(int) (*models.Customer, error)
+	Create(*models.Customer) error
+	Edit(*models.Customer) error
+	Delete(*RequestId) error
+	Get(*RequestSearch) ([]models.Customer, error)
+	GetById(*RequestId) (*models.Customer, error)
 }

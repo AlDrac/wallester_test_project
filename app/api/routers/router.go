@@ -39,6 +39,18 @@ func (router *Router) GetRouterHandlers() {
 		version+"/customer/{id:[0-9]+}",
 		customerController.Handler(customerController.GetCustomer),
 	).Methods(http.MethodGet)
+	router.HandleFunc(
+		version+"/customer/create",
+		customerController.Handler(customerController.Create),
+	).Methods(http.MethodPost)
+	router.HandleFunc(
+		version+"/customer/edit/{id:[0-9]+}",
+		customerController.Handler(customerController.Edit),
+	).Methods(http.MethodPut)
+	router.HandleFunc(
+		version+"/customer/delete/{id:[0-9]+}",
+		customerController.Handler(customerController.Delete),
+	).Methods(http.MethodDelete)
 
 	notFoundController := controllers.NotFound
 	notFoundController.Controller = router.Controller

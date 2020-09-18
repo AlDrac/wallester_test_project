@@ -1,8 +1,8 @@
 package controllers
 
 import (
+	"encoding/json"
 	"github.com/sirupsen/logrus"
-	"io"
 	"net/http"
 
 	"github.com/AlDrac/wallister_test_project/app/api/repositories"
@@ -23,12 +23,10 @@ func InitialiseController(repository repositories.Repository, logger *logrus.Log
 	}
 }
 
-func (c *Controller) responseJson(writer http.ResponseWriter, body string) error {
+func (c *Controller) responseJson(writer http.ResponseWriter, body interface{}, code int) error {
 	writer.Header().Set("Content-Type", "application/json")
-	writer.WriteHeader(http.StatusOK)
-
-	_, err := io.WriteString(writer, body)
-	if err != nil {
+	writer.WriteHeader(code)
+	if err := json.NewEncoder(writer).Encode(body); err != nil {
 		return err
 	}
 

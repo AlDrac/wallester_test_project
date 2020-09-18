@@ -2,7 +2,6 @@ package postgres
 
 import (
 	"database/sql"
-	"net/url"
 
 	"github.com/AlDrac/wallister_test_project/app/api/models"
 	"github.com/AlDrac/wallister_test_project/app/api/repositories"
@@ -55,7 +54,7 @@ func (r *CustomerRepository) Edit(customer *models.Customer) error {
 	return nil
 }
 
-func (r *CustomerRepository) Delete(id int) error {
+func (r *CustomerRepository) Delete(id *repositories.RequestId) error {
 	_, err := r.repository.db.Exec(
 		"UPDATE customers c SET "+
 			"c.active = false "+
@@ -70,16 +69,13 @@ func (r *CustomerRepository) Delete(id int) error {
 	return nil
 }
 
-func (r *CustomerRepository) Get(values url.Values) ([]models.Customer, error) {
-	firstName := values.Get("first_name")
-	lastName := values.Get("last_name")
-
+func (r *CustomerRepository) Get(req *repositories.RequestSearch) ([]models.Customer, error) {
 	rows, err := r.repository.db.Query(
 		"SELECT c.id, c.first_name, c.last_name, c.birth_date, c.gender, c.email, c.encrypted_password, c.address, c.active, c.registration_date " +
 			"FROM customers c " +
 			"WHERE c.active = true " +
-			"AND lower(c.first_name) SIMILAR TO '%" + firstName + "%' " +
-			"AND lower(c.last_name) SIMILAR TO '%" + lastName + "%'",
+			"AND lower(c.first_name) SIMILAR TO '%" + req.FirstName + "%' " +
+			"AND lower(c.last_name) SIMILAR TO '%" + req.LastName + "%'",
 	)
 	if err != nil {
 		return nil, err
@@ -110,14 +106,14 @@ func (r *CustomerRepository) Get(values url.Values) ([]models.Customer, error) {
 	return customers, nil
 }
 
-func (r *CustomerRepository) GetById(id int) (*models.Customer, error) {
+func (r *CustomerRepository) GetById(req *repositories.RequestId) (*models.Customer, error) {
 	c := &models.Customer{}
 	if err := r.repository.db.QueryRow(
 		"SELECT c.id, c.first_name, c.last_name, c.birth_date, c.gender, c.email, c.encrypted_password, c.address, c.active, c.registration_date "+
 			"FROM customers c "+
 			"WHERE c.active = true "+
 			"AND c.id = $1",
-		id,
+		req.Id,
 	).Scan(
 		&c.ID,
 		&c.FirstName,

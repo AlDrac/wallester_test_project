@@ -21,8 +21,8 @@ type Customer struct {
 	BirthDate         time.Time `json:"birth_date"`
 	Gender            string    `json:"gender"`
 	Email             string    `json:"email"`
-	Password          string
-	EncryptedPassword string    `json:"encrypted_password"`
+	Password          string    `json:"password,omitempty"`
+	EncryptedPassword string    `json:"-"`
 	Address           string    `json:"address"`
 	Active            bool      `json:"active"`
 	RegistrationDate  time.Time `json:"registration_date"`

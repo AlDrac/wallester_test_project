@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/AlDrac/wallister_test_project/app/api/repositories"
 	"github.com/gorilla/mux"
 )
 
@@ -15,17 +16,17 @@ type CustomerController struct {
 var Customer CustomerController
 
 func (c CustomerController) GetCustomers(writer http.ResponseWriter, request *http.Request) error {
-	customers, err := c.repository.Customer().Get(request.URL.Query())
+	req := &repositories.RequestSearch{}
+	if err := json.NewDecoder(request.Body).Decode(req); err != nil {
+		return err
+	}
+
+	customers, err := c.repository.Customer().Get(req)
 	if err != nil {
 		return err
 	}
 
-	body, err := json.Marshal(customers)
-	if err != nil {
-		return err
-	}
-
-	if err = c.responseJson(writer, string(body)); err != nil {
+	if err = c.responseJson(writer, customers, http.StatusOK); err != nil {
 		return err
 	}
 
@@ -33,22 +34,15 @@ func (c CustomerController) GetCustomers(writer http.ResponseWriter, request *ht
 }
 
 func (c CustomerController) GetCustomer(writer http.ResponseWriter, request *http.Request) error {
-	id, err := strconv.Atoi(mux.Vars(request)["id"])
+	req := &repositories.RequestId{}
+	req.Id, _ = strconv.Atoi(mux.Vars(request)["id"])
+
+	customer, err := c.repository.Customer().GetById(req)
 	if err != nil {
 		return err
 	}
 
-	customer, err := c.repository.Customer().GetById(id)
-	if err != nil {
-		return err
-	}
-
-	body, err := json.Marshal(customer)
-	if err != nil {
-		return err
-	}
-
-	if err = c.responseJson(writer, string(body)); err != nil {
+	if err = c.responseJson(writer, customer, http.StatusOK); err != nil {
 		return err
 	}
 
