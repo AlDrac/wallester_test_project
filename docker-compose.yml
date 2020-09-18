@@ -50,7 +50,7 @@ services:
       [
         "/bin/bash",
         "-c",
-        "sleep 5 &&
+        "sleep 10 &&
         migrate -path . -database $$POSTGRES_URL up &&
         migrate -path test -database $$POSTGRES_URL_TEST up &&
         tail -F anything"
@@ -77,7 +77,7 @@ services:
     volumes:
       - ./app/web:/go/src/app
     environment:
-      - PROJECT_WEB_PORT=${PROJECT_WEB_PORT}
+      - HTTP_PORT=${PROJECT_WEB_PORT}
     external_links:
       - database:database.loc
     networks:
@@ -88,6 +88,7 @@ services:
   api:
     image: golang
     container_name: api
+    restart: always
     depends_on:
       - database
     stdin_open: true
@@ -95,6 +96,14 @@ services:
     working_dir: /go/src/app
     volumes:
       - ./app/api:/go/src/app
+    command:
+      [
+          "/bin/bash",
+          "-c",
+          "sleep 10 &&
+            make &&
+            tail -F anything"
+      ]
     environment:
       - HTTP_PORT=${PROJECT_API_PORT}
       - LOGGER_LEVEL=${API_LOGGER_LEVEL}
