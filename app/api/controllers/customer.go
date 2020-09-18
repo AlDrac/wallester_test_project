@@ -1,10 +1,10 @@
 package controllers
 
 import (
-	"encoding/json"
 	"net/http"
 	"strconv"
 
+	"github.com/AlDrac/wallister_test_project/app/api/models"
 	"github.com/AlDrac/wallister_test_project/app/api/repositories"
 	"github.com/gorilla/mux"
 )
@@ -50,6 +50,18 @@ func (c CustomerController) GetCustomer(writer http.ResponseWriter, request *htt
 }
 
 func (c CustomerController) Create(writer http.ResponseWriter, request *http.Request) error {
+	req := &models.Customer{}
+	if err := json.NewDecoder(request.Body).Decode(req); err != nil {
+		return err
+	}
+
+	if err := c.repository.Customer().Create(req); err != nil {
+		return err
+	}
+
+	if err := c.responseJson(writer, "", http.StatusOK); err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -60,6 +72,16 @@ func (c CustomerController) Edit(writer http.ResponseWriter, request *http.Reque
 }
 
 func (c CustomerController) Delete(writer http.ResponseWriter, request *http.Request) error {
+	req := &repositories.RequestId{}
+	req.Id, _ = strconv.Atoi(mux.Vars(request)["id"])
+
+	if err := c.repository.Customer().Delete(req); err != nil {
+		return err
+	}
+
+	if err := c.responseJson(writer, "", http.StatusOK); err != nil {
+		return err
+	}
 
 	return nil
 }

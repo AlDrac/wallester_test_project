@@ -16,9 +16,14 @@ func (r *CustomerRepository) Create(customer *models.Customer) error {
 		return err
 	}
 
+	_, err := r.GetByEmail(customer.Email)
+	if err != repositories.ErrRecordNotFound {
+		return repositories.ErrRecordExist
+	}
+
 	return r.repository.db.QueryRow(
-		"INSERT INTO customers c ("+
-			"c.first_name, c.last_name, c.birth_date, c.gender, c.email, c.encrypted_password, c.address) "+
+		"INSERT INTO customers ("+
+			"first_name, last_name, birth_date, gender, email, encrypted_password, address) "+
 			"VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING id;",
 		customer.FirstName,
 		customer.LastName,
@@ -56,10 +61,10 @@ func (r *CustomerRepository) Edit(customer *models.Customer) error {
 
 func (r *CustomerRepository) Delete(id *repositories.RequestId) error {
 	_, err := r.repository.db.Exec(
-		"UPDATE customers c SET "+
-			"c.active = false "+
-			"WHERE c.id = $1;",
-		id,
+		"UPDATE customers SET "+
+			"active = false "+
+			"WHERE id = $1;",
+		id.Id,
 	)
 
 	if err != nil {
@@ -114,6 +119,34 @@ func (r *CustomerRepository) GetById(req *repositories.RequestId) (*models.Custo
 			"WHERE c.active = true "+
 			"AND c.id = $1",
 		req.Id,
+	).Scan(
+		&c.ID,
+		&c.FirstName,
+		&c.LastName,
+		&c.BirthDate,
+		&c.Gender,
+		&c.Email,
+		&c.EncryptedPassword,
+		&c.Address,
+		&c.Active,
+		&c.RegistrationDate,
+	); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, repositories.ErrRecordNotFound
+		}
+		return nil, err
+	}
+
+	return c, nil
+}
+
+func (r *CustomerRepository) GetByEmail(email string) (*models.Customer, error) {
+	c := &models.Customer{}
+	if err := r.repository.db.QueryRow(
+		"SELECT c.id, c.first_name, c.last_name, c.birth_date, c.gender, c.email, c.encrypted_password, c.address, c.active, c.registration_date "+
+			"FROM customers c "+
+			"WHERE c.email = $1",
+		email,
 	).Scan(
 		&c.ID,
 		&c.FirstName,

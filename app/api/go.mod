@@ -8,6 +8,7 @@ require (
 	github.com/darahayes/go-boom v0.0.0-20200826120415-fa5cb724143a
 	github.com/go-ozzo/ozzo-validation v3.6.0+incompatible
 	github.com/gorilla/mux v1.8.0
+	github.com/liamylian/jsontime v1.0.1
 	github.com/lib/pq v1.8.0
 	github.com/sirupsen/logrus v1.6.0
 	golang.org/x/crypto v0.0.0-20200820211705-5c72a883971a

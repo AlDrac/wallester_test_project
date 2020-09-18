@@ -1,12 +1,12 @@
 package controllers
 
 import (
-	"encoding/json"
-	"github.com/sirupsen/logrus"
 	"net/http"
 
 	"github.com/AlDrac/wallister_test_project/app/api/repositories"
 	"github.com/darahayes/go-boom"
+	"github.com/liamylian/jsontime"
+	"github.com/sirupsen/logrus"
 )
 
 type Action func(writer http.ResponseWriter, request *http.Request) error
@@ -15,6 +15,8 @@ type Controller struct {
 	repository repositories.Repository
 	logger     *logrus.Logger
 }
+
+var json = jsontime.ConfigWithCustomTimeFormat
 
 func InitialiseController(repository repositories.Repository, logger *logrus.Logger) Controller {
 	return Controller{
@@ -39,6 +41,8 @@ func (c *Controller) Handler(action Action) http.HandlerFunc {
 			c.logger.Error(err.Error())
 			if err == repositories.ErrRecordNotFound {
 				boom.NotFound(writer, err)
+			} else if err == repositories.ErrRecordExist {
+				boom.NotAcceptable(writer, err)
 			} else {
 				boom.Internal(writer, err)
 			}
