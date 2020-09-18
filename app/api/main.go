@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	config := configs.New()
+	config := configs.New(false)
 
 	kernel, err := kernels.Initialise(config)
 	if err != nil {

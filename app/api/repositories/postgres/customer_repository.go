@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"database/sql"
+	"strings"
 
 	"github.com/AlDrac/wallister_test_project/app/api/models"
 	"github.com/AlDrac/wallister_test_project/app/api/repositories"
@@ -83,8 +84,8 @@ func (r *CustomerRepository) Get(req *repositories.RequestSearch) ([]models.Cust
 		"SELECT c.id, c.first_name, c.last_name, c.birth_date, c.gender, c.email, c.encrypted_password, c.address, c.active, c.registration_date " +
 			"FROM customers c " +
 			"WHERE c.active = true " +
-			"AND lower(c.first_name) SIMILAR TO '%" + req.FirstName + "%' " +
-			"AND lower(c.last_name) SIMILAR TO '%" + req.LastName + "%';",
+			"AND lower(c.first_name) SIMILAR TO '%" + strings.ToLower(req.FirstName) + "%' " +
+			"AND lower(c.last_name) SIMILAR TO '%" + strings.ToLower(req.LastName) + "%';",
 	)
 	if err != nil {
 		return nil, err

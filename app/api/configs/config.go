@@ -10,11 +10,13 @@ import (
 )
 
 var (
-	configPath string
+	configPath     string
+	configTestPath string
 )
 
 func init() {
 	flag.StringVar(&configPath, "config-path", "configs/yaml/api.yaml", "path to api config file")
+	flag.StringVar(&configTestPath, "config-test-path", "../../../configs/yaml/api.yaml", "path to test api config file")
 }
 
 type (
@@ -38,10 +40,15 @@ type (
 	}
 )
 
-func New() *Config {
+func New(isTest bool) *Config {
 	flag.Parse()
 
-	configContent, err := ioutil.ReadFile(configPath)
+	path := configPath
+	if isTest == true {
+		path = configTestPath
+	}
+
+	configContent, err := ioutil.ReadFile(path)
 	if err != nil {
 		log.Fatal(err)
 	}
