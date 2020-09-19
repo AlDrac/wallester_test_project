@@ -103,8 +103,6 @@ func RenderTemplate(w http.ResponseWriter, name string, data interface{}) error 
 
 	err := tmpl.Execute(buf, data)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		err := NewError("Template execution failed")
 		return err
 	}
 
