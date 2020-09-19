@@ -2,12 +2,11 @@ package template_service
 
 import (
 	"fmt"
+	"github.com/oxtoacart/bpool"
 	"html/template"
 	"log"
 	"net/http"
 	"path/filepath"
-
-	"github.com/oxtoacart/bpool"
 )
 
 var templates map[string]*template.Template
@@ -28,6 +27,10 @@ type TemplateError struct {
 	s string
 }
 
+type TemplateFuncMap struct {
+	FM template.FuncMap
+}
+
 func (e *TemplateError) Error() string {
 	return e.s
 }
@@ -37,13 +40,17 @@ func NewError(text string) error {
 }
 
 var templateConfig *TemplateConfig
+var funcMap *TemplateFuncMap
 
 func SetTemplateConfig(layoutPath, includePath string) {
 	templateConfig = &TemplateConfig{layoutPath, includePath}
 }
 
-func LoadTemplates() (err error) {
+func SetTemplateFunction(fm *TemplateFuncMap) {
+	funcMap = fm
+}
 
+func LoadTemplates() (err error) {
 	if templateConfig == nil {
 		err = NewError("TemplateConfig not initialized")
 		return err
@@ -62,7 +69,7 @@ func LoadTemplates() (err error) {
 		return err
 	}
 
-	mainTemplate := template.New("main")
+	mainTemplate := template.New("main").Funcs(funcMap.FM)
 
 	mainTemplate, err = mainTemplate.Parse(mainTmpl)
 	if err != nil {

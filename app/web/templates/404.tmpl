@@ -1,15 +1,21 @@
 {{define "title"}}Oops!{{end}}
-{{define "content"}}
-    <div id="notfound">
-        <div class="notfound">
-            <div class="notfound-404">
-                <h1>Oops!</h1>
+
+{{define "title_content"}}
+    <div class="jumbotron page-404">
+        <div id="notfound">
+            <div class="notfound">
+                <div class="notfound-404">
+                    <h1>Oops!</h1>
+                </div>
             </div>
         </div>
     </div>
-    <h1 class="cover-heading">404 - Page not found</h1>
-    <p class="lead">The page you are looking for might have been removed had its name changed or is temporarily unavailable.</p>
-    <p class="lead">
-        <a href="/" class="btn btn-lg btn-secondary">Go To Homepage</a>
-    </p>
+{{end}}
+
+{{define "content"}}
+    <div class="container">
+        <h2>404 - Page not found</h2>
+        <p>The page you are looking for might have been removed had its name changed or is temporarily unavailable.</p>
+        <p><a class="btn btn-primary btn-lg" href="/" role="button">Go To Homepage &raquo;</a></p>
+    </div>
 {{end}}

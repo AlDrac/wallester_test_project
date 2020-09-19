@@ -1,8 +1,13 @@
 {{define "title"}}Home{{end}}
-{{define "content"}}
-    <h1 class="cover-heading">Welcome to the start page.</h1>
-    <p class="lead">This page is intended to greet the user. To see all our users, please click on the button at the bottom.</p>
-    <p class="lead">
-        <a href="/customers" class="btn btn-lg btn-secondary">Customers</a>
-    </p>
+
+{{define "title_content"}}
+    <div class="jumbotron">
+        <div class="container">
+            <h1 class="display-3">Welcome to the start page.</h1>
+            <p>This page is intended to greet the manager. To see all our customers, please click on the button at the bottom.</p>
+            <p><a class="btn btn-primary btn-lg" href="/customers" role="button">Customers &raquo;</a></p>
+        </div>
+    </div>
 {{end}}
+
+{{define "content"}}{{end}}

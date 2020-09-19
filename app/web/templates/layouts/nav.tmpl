@@ -1,11 +1,19 @@
 {{define "nav"}}
-    <header class="masthead mb-auto">
-        <div class="inner">
-            <h3 class="masthead-brand">Customer manager</h3>
-            <nav class="nav nav-masthead justify-content-center">
-                <a class="nav-link{{if eq .Page "home"}} active{{end}}" href="/">Home</a>
-                <a class="nav-link{{if eq .Page "customers"}} active{{end}}" href="/customers">Customers</a>
-            </nav>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <a class="navbar-brand" href="/">Customer manager</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item{{if eq .Page "home"}} active{{end}}">
+                    <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item{{if eq .Page "customers"}} active{{end}}">
+                    <a class="nav-link" href="/customers">Customers</a>
+                </li>
+            </ul>
         </div>
-    </header>
+    </nav>
 {{end}}

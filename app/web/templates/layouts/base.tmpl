@@ -10,26 +10,27 @@
 
         <title>{{block "title" .}} {{end}}</title>
 
-        <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/cover/">
+        <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/jumbotron/">
 
         {{block "style" .}} {{end}}
     </head>
 
-    <body class="text-center">
+    <body>
 
-    <div class="cover-container d-flex h-100 p-3 mx-auto flex-column">
-        {{block "nav" .}} {{end}}
+    {{block "nav" .}} {{end}}
 
-        <main role="main" class="inner cover">
+    <main role="main">
+        {{template "title_content" .}}
+
+        <div class="container">
             {{template "content" .}}
-        </main>
+            <hr>
+        </div>
+    </main>
 
-        <footer class="mastfoot mt-auto">
-            <div class="inner">
-                <p>Cover template for <a href="https://getbootstrap.com/">Bootstrap</a>, by <a href="https://twitter.com/mdo">@mdo</a>.</p>
-            </div>
-        </footer>
-    </div>
+    <footer class="container">
+        <p>&copy; Sergey Saprykin 2020-{{now.UTC.Year}}</p>
+    </footer>
 
     {{block "js" .}} {{end}}
     </body>
