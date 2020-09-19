@@ -12,7 +12,7 @@ make
 after 10 second you can use websites
 
 - API urls
-```
+```bash
 [ GET ]     - http://localhost/api/v1/customers
 // JSON REQUEST BODY {"first_name": "", "last_name": ""}
 
@@ -41,6 +41,21 @@ after 10 second you can use websites
 }
 
 [ DELETE ]  - http://localhost/api/v1/customer/delete/{id:[0-9]+}
+```
+
+- WEB urls
+```bash
+[ GET ]     - http://localhost/
+[ GET ]     - http://localhost/customers
+
+[ GET ]     - http://localhost/customer/create/
+[ POST ]    - http://localhost/customer/create/
+
+[ GET ]     - http://localhost/customer/{id:[0-9]+}
+[ GET ]     - http://localhost/customer/edit/{id:[0-9]+}
+[ POST ]    - http://localhost/customer/edit/{id:[0-9]+}
+
+[ GET ]     - http://localhost/customer/delete/{id:[0-9]+}
 ```
 
 ### Close

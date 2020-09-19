@@ -42,8 +42,8 @@ func (router *Router) GetRouterHandlers() {
 	router.HandleFunc("/", indexHandler).Methods(http.MethodGet)
 	router.HandleFunc("/customers", customersHandler).Methods(http.MethodGet)
 
-	router.HandleFunc("/customer/create/", customerEditHandler).Methods(http.MethodGet)
-	router.HandleFunc("/customer/create/", customerPostCreateHandler).Methods(http.MethodPost)
+	router.HandleFunc("/customer/create", customerEditHandler).Methods(http.MethodGet)
+	router.HandleFunc("/customer/create", customerPostCreateHandler).Methods(http.MethodPost)
 
 	router.HandleFunc("/customer/{id:[0-9]+}", customerViewHandler).Methods(http.MethodGet)
 	router.HandleFunc("/customer/edit/{id:[0-9]+}", customerEditHandler).Methods(http.MethodGet)
