@@ -23,7 +23,7 @@ docker-bash-api:
 	docker-compose exec -u 0:0 api bash
 
 docker-bash-web:
-	docker-compose exec -u 1000:1000 web bash
+	docker-compose exec -u 0:0 web bash
 
 docker-bash-migration:
 	docker-compose exec -u 1000:1000 migration bash

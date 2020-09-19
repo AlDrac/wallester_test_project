@@ -1,0 +1,11 @@
+{{define "nav"}}
+    <header class="masthead mb-auto">
+        <div class="inner">
+            <h3 class="masthead-brand">Customer manager</h3>
+            <nav class="nav nav-masthead justify-content-center">
+                <a class="nav-link{{if eq .Page "home"}} active{{end}}" href="/">Home</a>
+                <a class="nav-link{{if eq .Page "customers"}} active{{end}}" href="/customers">Customers</a>
+            </nav>
+        </div>
+    </header>
+{{end}}

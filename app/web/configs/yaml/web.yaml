@@ -1,0 +1,6 @@
+http:
+  port: "${HTTP_PORT}"
+
+template:
+  layout: "templates/layouts/"
+  include: "templates/"
