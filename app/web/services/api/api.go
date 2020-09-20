@@ -61,3 +61,12 @@ func GetCustomer(id string) (interface{}, error) {
 	}
 	return result.Result, nil
 }
+
+func DeleteCustomer(id string) (interface{}, error) {
+	data := make(map[string]string)
+	result := getFromApi("/customer/delete/"+id, http.MethodDelete, data)
+	if result.Error != "" {
+		return nil, errors.New(result.Message)
+	}
+	return result.Result, nil
+}

@@ -46,7 +46,7 @@ func (router *Router) GetRouterHandlers() {
 	router.HandleFunc("/customer/edit/{id:[0-9]+}", middlewareHandler(customerEditHandler)).Methods(http.MethodGet)
 	router.HandleFunc("/customer/edit/{id:[0-9]+}", middlewareHandler(customerPostEditHandler)).Methods(http.MethodPost)
 
-	router.HandleFunc("/customer/delete/{id:[0-9]+}", middlewareHandler(customerDeleteHandler)).Methods(http.MethodGet)
+	router.HandleFunc("/customer/delete/{id:[0-9]+}", middlewareHandler(customerDeleteHandler)).Methods(http.MethodPost)
 
 	router.NotFoundHandler = middlewareHandler(pageNotFoundHandler)
 }

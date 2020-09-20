@@ -68,7 +68,17 @@
         </form>
 
         <div class="col-md-3">
+            <div class="row">
+                <a href="/customer/edit/{{ .Data.customer.id }}" class="btn btn-info">Edit customer</a>
+            </div>
 
+            <div class="row">&nbsp;</div>
+
+            <div class="row">
+                <form action="/customer/delete/{{ .Data.customer.id }}" method="post">
+                    <button type="submit" class="btn btn-danger">Delete customer</button>
+                </form>
+            </div>
         </div>
     </div>
 {{end}}

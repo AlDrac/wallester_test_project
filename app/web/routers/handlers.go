@@ -1,11 +1,15 @@
 package routers
 
 import (
+	"fmt"
+	"github.com/AlDrac/wallister_test_project/app/web/models"
 	serviceApi "github.com/AlDrac/wallister_test_project/app/web/services/api"
 	serviceTemplate "github.com/AlDrac/wallister_test_project/app/web/services/template"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 	"net/http"
+	"strconv"
+	"time"
 )
 
 const (
@@ -125,6 +129,16 @@ func customerPostCreateHandler(w http.ResponseWriter, r *http.Request) error {
 
 func customerViewHandler(w http.ResponseWriter, r *http.Request) error {
 	data := make(map[string]interface{})
+
+	suF, _ := getFlashesSuccess(w, r)
+	if suF != nil {
+		data[successType] = suF
+	}
+	erF, _ := getFlashesError(w, r)
+	if erF != nil {
+		data[errorType] = erF
+	}
+
 	customer, err := serviceApi.GetCustomer(mux.Vars(r)["id"])
 	if err != nil {
 		if err := setFlashes(w, r, errorType, err.Error()); err != nil {
@@ -145,14 +159,66 @@ func customerViewHandler(w http.ResponseWriter, r *http.Request) error {
 }
 
 func customerEditHandler(w http.ResponseWriter, r *http.Request) error {
+	data := make(map[string]interface{})
+
+	customer, err := serviceApi.GetCustomer(mux.Vars(r)["id"])
+	if err != nil {
+		if err := setFlashes(w, r, errorType, err.Error()); err != nil {
+			return err
+		}
+		http.Redirect(w, r, "/customers", http.StatusFound)
+		return nil
+	}
+	data["customer"] = customer
+	if err := serviceTemplate.RenderTemplate(w, "customer_edit.tmpl", TemplateData{
+		Page: "customer_edit",
+		Data: data,
+	}); err != nil {
+		return err
+	}
+
 	return nil
 }
 
 func customerPostEditHandler(w http.ResponseWriter, r *http.Request) error {
+	if err := r.ParseForm(); err != nil {
+		return err
+	}
+	customer := models.Customer{}
+	customer.ID, _ = strconv.Atoi(r.FormValue("id"))
+	customer.FirstName = r.FormValue("first_name")
+	customer.LastName = r.FormValue("last_name")
+
+	t, err := time.Parse(time.RFC3339, r.FormValue("birth_date")+"T00:00:00Z")
+	if err != nil {
+		return err
+	}
+
+	customer.BirthDate = t
+	customer.Gender = r.FormValue("gender")
+	customer.Email = r.FormValue("email")
+	customer.Address = r.FormValue("address")
+
+	fmt.Println("%v", customer)
 
 	return nil
 }
 
 func customerDeleteHandler(w http.ResponseWriter, r *http.Request) error {
+	fmt.Println(mux.Vars(r)["id"])
+	_, err := serviceApi.DeleteCustomer(mux.Vars(r)["id"])
+	if err != nil {
+		if err := setFlashes(w, r, errorType, err.Error()); err != nil {
+			return err
+		}
+		http.Redirect(w, r, "/customer/"+mux.Vars(r)["id"], http.StatusFound)
+		return nil
+	}
+
+	if err := setFlashes(w, r, successType, "The customer has been deleted (#"+mux.Vars(r)["id"]+")"); err != nil {
+		return err
+	}
+	http.Redirect(w, r, "/customers", http.StatusFound)
+
 	return nil
 }

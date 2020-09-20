@@ -1,0 +1,59 @@
+{{define "title"}}Customers{{end}}
+
+{{define "title_content"}}{{end}}
+
+{{define "content"}}
+    <div id="legend">
+        <legend><a href="/customers">Customers</a> -> <a href="/customer/{{ .Data.customer.id }}">{{ .Data.customer.first_name }} {{ .Data.customer.last_name }}</a> -> Edit</legend>
+    </div>
+
+    <div class="row col-md-12">
+        <form class="col-md-12 form-horizontal" action="/customer/edit/{{ .Data.customer.id }}" method="post">
+            <div class="form-group row">
+                <label for="first_name" class="col-sm-4 col-form-label">First name</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" id="first_name" name="first_name" value="{{ .Data.customer.first_name }}">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="last_name" class="col-sm-4 col-form-label">Last name</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" id="last_name" name="last_name" value="{{ .Data.customer.last_name }}">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="birth_date" class="col-sm-4 col-form-label">Birth date</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" id="birth_date" name="birth_date" value="{{ .Data.customer.birth_date }}">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="gender" class="col-sm-4 col-form-label">Gender</label>
+                <div class="col-sm-8">
+                    <select id="gender" name="gender" class="form-control">
+                        <option>Choose...</option>
+                        <option value="male"{{ if eq .Data.customer.gender "male" }} selected{{ end }}>Male</option>
+                        <option value="female"{{ if eq .Data.customer.gender "female" }} selected{{ end }}>Female</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="email" class="col-sm-4 col-form-label">Email</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" id="email" name="email" value="{{ .Data.customer.email }}">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="address" class="col-sm-4 col-form-label">Address</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" id="address" name="address" value="{{ .Data.customer.address }}">
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <input type="hidden" readonly class="form-control-plaintext" id="id" name="id" value="{{ .Data.customer.id }}">
+                <button type="submit" class="btn btn-success">Update</button>
+            </div>
+        </form>
+    </div>
+{{end}}

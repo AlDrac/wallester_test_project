@@ -55,7 +55,7 @@ after 10 second you can use websites
 [ GET ]     - http://localhost/customer/edit/{id:[0-9]+}
 [ POST ]    - http://localhost/customer/edit/{id:[0-9]+}
 
-[ GET ]     - http://localhost/customer/delete/{id:[0-9]+}
+[ POST ]     - http://localhost/customer/delete/{id:[0-9]+}
 ```
 
 ### Close
