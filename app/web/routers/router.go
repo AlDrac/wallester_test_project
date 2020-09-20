@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	template_service "github.com/AlDrac/wallister_test_project/app/web/services"
+	serviceTemplate "github.com/AlDrac/wallister_test_project/app/web/services/template"
 	"github.com/gorilla/mux"
 )
 
@@ -38,13 +38,13 @@ func (router *Router) GetRouterHandlers() {
 	router.HandleFunc("/", middlewareHandler(indexHandler)).Methods(http.MethodGet)
 	router.HandleFunc("/customers", middlewareHandler(customersHandler)).Methods(http.MethodGet)
 
-	router.HandleFunc("/customer/create", middlewareHandler(customerEditHandler)).Methods(http.MethodGet)
+	router.HandleFunc("/customer/create", middlewareHandler(customerCreateHandler)).Methods(http.MethodGet)
 	router.HandleFunc("/customer/create", middlewareHandler(customerPostCreateHandler)).Methods(http.MethodPost)
 
 	router.HandleFunc("/customer/{id:[0-9]+}", middlewareHandler(customerViewHandler)).Methods(http.MethodGet)
 	router.HandleFunc("/customer/edit/{id:[0-9]+}", middlewareHandler(customerEditHandler)).Methods(http.MethodGet)
 	router.HandleFunc("/customer/edit/{id:[0-9]+}", middlewareHandler(customerPostEditHandler)).Methods(http.MethodPost)
-	router.HandleFunc("/customer/delete/{id:[0-9]+}", middlewareHandler(customerViewHandler)).Methods(http.MethodGet)
+	router.HandleFunc("/customer/delete/{id:[0-9]+}", middlewareHandler(customerDeleteHandler)).Methods(http.MethodGet)
 
 	router.NotFoundHandler = middlewareHandler(pageNotFoundHandler)
 }
@@ -61,7 +61,7 @@ func middlewareHandler(action ActionHandler) http.HandlerFunc {
 }
 
 func pageInternalServerErrorHandler(w http.ResponseWriter, r *http.Request) {
-	err := template_service.RenderTemplate(w, "500.tmpl", TemplateData{
+	err := serviceTemplate.RenderTemplate(w, "500.tmpl", TemplateData{
 		Page: "500",
 	})
 	if err != nil {
@@ -70,7 +70,7 @@ func pageInternalServerErrorHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func pageNotFoundHandler(w http.ResponseWriter, r *http.Request) error {
-	err := template_service.RenderTemplate(w, "404.tmpl", TemplateData{
+	err := serviceTemplate.RenderTemplate(w, "404.tmpl", TemplateData{
 		Page: "404",
 	})
 	if err != nil {

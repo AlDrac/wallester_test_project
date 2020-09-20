@@ -1,4 +1,4 @@
-package template_service
+package serviceTemplate
 
 import (
 	"fmt"
@@ -107,6 +107,8 @@ func RenderTemplate(w http.ResponseWriter, name string, data interface{}) error 
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	buf.WriteTo(w)
+	if _, err = buf.WriteTo(w); err != nil {
+		return err
+	}
 	return nil
 }

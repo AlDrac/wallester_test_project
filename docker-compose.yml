@@ -78,8 +78,10 @@ services:
       - ./app/web:/go/src/app
     environment:
       - HTTP_PORT=${PROJECT_WEB_PORT}
+      - HTTP_API_PORT=${PROJECT_API_PORT}
     external_links:
       - database:database.loc
+      - api:api.loc
     networks:
       general:
         aliases:

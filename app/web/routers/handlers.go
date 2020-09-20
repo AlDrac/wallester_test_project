@@ -1,10 +1,12 @@
 package routers
 
 import (
-	"net/http"
-
-	template_service "github.com/AlDrac/wallister_test_project/app/web/services"
+	"fmt"
+	serviceApi "github.com/AlDrac/wallister_test_project/app/web/services/api"
+	serviceTemplate "github.com/AlDrac/wallister_test_project/app/web/services/template"
+	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
+	"net/http"
 )
 
 const (
@@ -71,20 +73,6 @@ func indexHandler(w http.ResponseWriter, r *http.Request) error {
 	//if suF != nil {
 	//	data["error"] = erF
 	//}
-
-	err := template_service.RenderTemplate(w, "index.tmpl", TemplateData{
-		Page: "home",
-		Data: data,
-	})
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func customersHandler(w http.ResponseWriter, r *http.Request) error {
-	var data = make(map[string]interface{})
 	//if err := setFlashes(w, r, errorType, "First Error"); err != nil {
 	//	return err
 	//}
@@ -96,7 +84,28 @@ func customersHandler(w http.ResponseWriter, r *http.Request) error {
 	//}
 	//http.Redirect(w, r, "/", http.StatusFound)
 
-	err := template_service.RenderTemplate(w, "customers.tmpl", TemplateData{
+	err := serviceTemplate.RenderTemplate(w, "index.tmpl", TemplateData{
+		Page: "home",
+		Data: data,
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func customersHandler(w http.ResponseWriter, r *http.Request) error {
+	data := make(map[string]interface{})
+	search := map[string]string{
+		"first_name": r.URL.Query().Get("first_name"),
+		"last_name":  r.URL.Query().Get("last_name"),
+	}
+	data["search"] = search
+	customers := serviceApi.GetCustomers(search)
+	data["customers"] = customers
+
+	err := serviceTemplate.RenderTemplate(w, "customers.tmpl", TemplateData{
 		Page: "customers",
 		Data: data,
 	})
@@ -108,6 +117,17 @@ func customersHandler(w http.ResponseWriter, r *http.Request) error {
 }
 
 func customerCreateHandler(w http.ResponseWriter, r *http.Request) error {
+	data := make(map[string]interface{})
+	err := serviceTemplate.RenderTemplate(w, "customer_create.tmpl", TemplateData{
+		Page: "customer_create",
+		Data: data,
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
+
 	return nil
 }
 
@@ -116,6 +136,18 @@ func customerPostCreateHandler(w http.ResponseWriter, r *http.Request) error {
 }
 
 func customerViewHandler(w http.ResponseWriter, r *http.Request) error {
+	id := mux.Vars(r)["id"]
+	fmt.Println(id)
+	data := make(map[string]interface{})
+	err := serviceTemplate.RenderTemplate(w, "customer_view.tmpl", TemplateData{
+		Page: "customer_view",
+		Data: data,
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
 	return nil
 }
 

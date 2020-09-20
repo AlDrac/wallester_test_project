@@ -3,7 +3,8 @@ package kernels
 import (
 	"github.com/AlDrac/wallister_test_project/app/web/configs"
 	"github.com/AlDrac/wallister_test_project/app/web/routers"
-	"github.com/AlDrac/wallister_test_project/app/web/services"
+	serviceApi "github.com/AlDrac/wallister_test_project/app/web/services/api"
+	serviceTemplate "github.com/AlDrac/wallister_test_project/app/web/services/template"
 	"html/template"
 	"log"
 	"time"
@@ -15,18 +16,19 @@ type kernel struct {
 }
 
 func Initialise(config *configs.Config) *kernel {
-	template_service.SetTemplateConfig(config.Template.Layout, config.Template.Include)
-	template_service.SetTemplateFunction(&template_service.TemplateFuncMap{
+	serviceTemplate.SetTemplateConfig(config.Template.Layout, config.Template.Include)
+	serviceTemplate.SetTemplateFunction(&serviceTemplate.TemplateFuncMap{
 		FM: template.FuncMap{
 			"now": time.Now,
 		},
 	})
 
-	if err := template_service.LoadTemplates(); err != nil {
+	if err := serviceTemplate.LoadTemplates(); err != nil {
 		log.Fatal(err)
 	}
 
 	routers.SetStore(config.Session.Key)
+	serviceApi.InitializeServiceApi(config.Http.ApiUrl)
 
 	return &kernel{
 		server: initialiseServer(),

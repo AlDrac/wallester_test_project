@@ -1,5 +1,6 @@
 http:
   port: "${HTTP_PORT}"
+  api_url: "http://api.loc:${HTTP_API_PORT}/v1"
 
 template:
   layout: "templates/layouts/"

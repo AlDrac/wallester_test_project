@@ -19,7 +19,8 @@ func init() {
 
 type (
 	Http struct {
-		Port string `yaml:"port"`
+		Port   string `yaml:"port"`
+		ApiUrl string `yaml:"api_url"`
 	}
 
 	Template struct {
