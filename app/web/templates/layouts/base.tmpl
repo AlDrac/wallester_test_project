@@ -23,6 +23,7 @@
         {{template "title_content" .}}
 
         <div class="container">
+            <div class="row">&nbsp;</div>
             {{ if .Data.success }}<div class="alert alert-success" role="alert">{{range $value := .Data.success }}{{ $value }}<br/>{{end}}</div>{{end}}
             {{ if .Data.error }}<div class="alert alert-danger" role="alert">{{range $value := .Data.error }}{{ $value }}<br/>{{end}}</div>{{end}}
             {{template "content" .}}

@@ -26,7 +26,11 @@ func (c CustomerController) GetCustomers(writer http.ResponseWriter, request *ht
 		return err
 	}
 
-	if err = c.responseJson(writer, customers, http.StatusOK); err != nil {
+	result := new(ResStruct)
+	result.Result = customers
+	result.StatusCode = http.StatusOK
+
+	if err = c.responseJson(writer, result, http.StatusOK); err != nil {
 		return err
 	}
 
@@ -42,7 +46,11 @@ func (c CustomerController) GetCustomer(writer http.ResponseWriter, request *htt
 		return err
 	}
 
-	if err = c.responseJson(writer, customer, http.StatusOK); err != nil {
+	result := new(ResStruct)
+	result.Result = customer
+	result.StatusCode = http.StatusOK
+
+	if err = c.responseJson(writer, result, http.StatusOK); err != nil {
 		return err
 	}
 
@@ -59,7 +67,11 @@ func (c CustomerController) Create(writer http.ResponseWriter, request *http.Req
 		return err
 	}
 
-	if err := c.responseJson(writer, "", http.StatusOK); err != nil {
+	result := new(ResStruct)
+	result.Result = "ok"
+	result.StatusCode = http.StatusOK
+
+	if err := c.responseJson(writer, result, http.StatusOK); err != nil {
 		return err
 	}
 
@@ -77,7 +89,11 @@ func (c CustomerController) Edit(writer http.ResponseWriter, request *http.Reque
 		return err
 	}
 
-	if err := c.responseJson(writer, "", http.StatusOK); err != nil {
+	result := new(ResStruct)
+	result.Result = "ok"
+	result.StatusCode = http.StatusOK
+
+	if err := c.responseJson(writer, result, http.StatusOK); err != nil {
 		return err
 	}
 
@@ -92,7 +108,11 @@ func (c CustomerController) Delete(writer http.ResponseWriter, request *http.Req
 		return err
 	}
 
-	if err := c.responseJson(writer, "", http.StatusOK); err != nil {
+	result := new(ResStruct)
+	result.Result = "ok"
+	result.StatusCode = http.StatusOK
+
+	if err := c.responseJson(writer, result, http.StatusOK); err != nil {
 		return err
 	}
 

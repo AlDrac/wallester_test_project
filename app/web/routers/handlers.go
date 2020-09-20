@@ -1,7 +1,6 @@
 package routers
 
 import (
-	"fmt"
 	serviceApi "github.com/AlDrac/wallister_test_project/app/web/services/api"
 	serviceTemplate "github.com/AlDrac/wallister_test_project/app/web/services/template"
 	"github.com/gorilla/mux"
@@ -65,24 +64,6 @@ func setFlashes(w http.ResponseWriter, r *http.Request, flashType string, messag
 
 func indexHandler(w http.ResponseWriter, r *http.Request) error {
 	var data = make(map[string]interface{})
-	//suF, _ := getFlashesSuccess(w, r)
-	//if suF != nil {
-	//	data["success"] = suF
-	//}
-	//erF, _ := getFlashesError(w, r)
-	//if suF != nil {
-	//	data["error"] = erF
-	//}
-	//if err := setFlashes(w, r, errorType, "First Error"); err != nil {
-	//	return err
-	//}
-	//if err := setFlashes(w, r, errorType, "First Error"); err != nil {
-	//	return err
-	//}
-	//if err := setFlashes(w, r, successType, "First Success"); err != nil {
-	//	return err
-	//}
-	//http.Redirect(w, r, "/", http.StatusFound)
 
 	err := serviceTemplate.RenderTemplate(w, "index.tmpl", TemplateData{
 		Page: "home",
@@ -97,6 +78,16 @@ func indexHandler(w http.ResponseWriter, r *http.Request) error {
 
 func customersHandler(w http.ResponseWriter, r *http.Request) error {
 	data := make(map[string]interface{})
+
+	suF, _ := getFlashesSuccess(w, r)
+	if suF != nil {
+		data[successType] = suF
+	}
+	erF, _ := getFlashesError(w, r)
+	if erF != nil {
+		data[errorType] = erF
+	}
+
 	search := map[string]string{
 		"first_name": r.URL.Query().Get("first_name"),
 		"last_name":  r.URL.Query().Get("last_name"),
@@ -125,9 +116,6 @@ func customerCreateHandler(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
-
-	return nil
-
 	return nil
 }
 
@@ -136,18 +124,23 @@ func customerPostCreateHandler(w http.ResponseWriter, r *http.Request) error {
 }
 
 func customerViewHandler(w http.ResponseWriter, r *http.Request) error {
-	id := mux.Vars(r)["id"]
-	fmt.Println(id)
 	data := make(map[string]interface{})
-	err := serviceTemplate.RenderTemplate(w, "customer_view.tmpl", TemplateData{
+	customer, err := serviceApi.GetCustomer(mux.Vars(r)["id"])
+	if err != nil {
+		if err := setFlashes(w, r, errorType, err.Error()); err != nil {
+			return err
+		}
+		http.Redirect(w, r, "/customers", http.StatusFound)
+		return nil
+	}
+	data["customer"] = customer
+	if err := serviceTemplate.RenderTemplate(w, "customer_view.tmpl", TemplateData{
 		Page: "customer_view",
 		Data: data,
-	})
-	if err != nil {
+	}); err != nil {
 		return err
 	}
 
-	return nil
 	return nil
 }
 

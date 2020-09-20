@@ -16,6 +16,13 @@ type Controller struct {
 	logger     *logrus.Logger
 }
 
+type ResStruct struct {
+	Error		string		`json:"error"`
+	Message		string		`json:"message"`
+	StatusCode	int			`json:"statusCode"`
+	Result		interface{}	`json:"result"`
+}
+
 var json = jsontime.ConfigWithCustomTimeFormat
 
 func InitialiseController(repository repositories.Repository, logger *logrus.Logger) Controller {
