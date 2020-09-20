@@ -4,3 +4,6 @@ http:
 template:
   layout: "templates/layouts/"
   include: "templates/"
+
+session:
+  key: "askldjlksdjfgladvnadfhgoarotguaioerptiuerjgkadlfjgldkfnbladfngbkladflgjkadfklgjadjfklgadlkjfglajdfglandf"

@@ -3,21 +3,15 @@ package routers
 import (
 	"flag"
 	"fmt"
-	template_service "github.com/AlDrac/wallister_test_project/app/web/services"
-	"github.com/gorilla/mux"
 	"log"
 	"net/http"
-)
 
-type ActionHandler func(writer http.ResponseWriter, request *http.Request) error
+	template_service "github.com/AlDrac/wallister_test_project/app/web/services"
+	"github.com/gorilla/mux"
+)
 
 type Router struct {
 	*mux.Router
-}
-
-type Messages struct {
-	Errors  []string
-	Success string
 }
 
 type TemplateData struct {
@@ -26,8 +20,7 @@ type TemplateData struct {
 }
 
 var (
-	dir      string
-	messages *Messages
+	dir string
 )
 
 func InitialiseRouter() *Router {
@@ -56,6 +49,8 @@ func (router *Router) GetRouterHandlers() {
 	router.NotFoundHandler = middlewareHandler(pageNotFoundHandler)
 }
 
+type ActionHandler func(writer http.ResponseWriter, request *http.Request) error
+
 func middlewareHandler(action ActionHandler) http.HandlerFunc {
 	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 		if err := action(writer, request); err != nil {
@@ -82,53 +77,5 @@ func pageNotFoundHandler(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	return nil
-}
-
-func indexHandler(w http.ResponseWriter, r *http.Request) error {
-	err := template_service.RenderTemplate(w, "index.tmpl", TemplateData{
-		Page: "home",
-	})
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func customersHandler(w http.ResponseWriter, r *http.Request) error {
-
-	err := template_service.RenderTemplate(w, "customers.tmpl", TemplateData{
-		Page: "customers",
-	})
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func customerCreateHandler(w http.ResponseWriter, r *http.Request) error {
-	return nil
-}
-
-func customerPostCreateHandler(w http.ResponseWriter, r *http.Request) error {
-	return nil
-}
-
-func customerViewHandler(w http.ResponseWriter, r *http.Request) error {
-	return nil
-}
-
-func customerEditHandler(w http.ResponseWriter, r *http.Request) error {
-	return nil
-}
-
-func customerPostEditHandler(w http.ResponseWriter, r *http.Request) error {
-
-	return nil
-}
-
-func customerDeleteHandler(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }

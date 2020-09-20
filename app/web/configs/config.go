@@ -27,9 +27,14 @@ type (
 		Include string `yaml:"include"`
 	}
 
+	Session struct {
+		Key string `yaml:"key"`
+	}
+
 	Config struct {
 		Http     `yaml:"http"`
 		Template `yaml:"template"`
+		Session  `yaml:"session"`
 	}
 )
 

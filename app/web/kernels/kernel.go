@@ -2,6 +2,7 @@ package kernels
 
 import (
 	"github.com/AlDrac/wallister_test_project/app/web/configs"
+	"github.com/AlDrac/wallister_test_project/app/web/routers"
 	"github.com/AlDrac/wallister_test_project/app/web/services"
 	"html/template"
 	"log"
@@ -24,6 +25,8 @@ func Initialise(config *configs.Config) *kernel {
 	if err := template_service.LoadTemplates(); err != nil {
 		log.Fatal(err)
 	}
+
+	routers.SetStore(config.Session.Key)
 
 	return &kernel{
 		server: initialiseServer(),
