@@ -1,4 +1,4 @@
-{{define "title"}}Customers{{end}}
+{{define "title"}}Customer edit{{end}}
 
 {{define "title_content"}}{{end}}
 
@@ -8,7 +8,7 @@
     </div>
 
     <div class="row col-md-12">
-        <form class="col-md-12 form-horizontal" action="/customer/edit/{{ .Data.customer.id }}" method="post">
+        <form class="col-md-12 form-horizontal" action="/customer/edit/{{ .Data.customer.id }}" method="post" autocomplete="off">
             <div class="form-group row">
                 <label for="first_name" class="col-sm-4 col-form-label">First name</label>
                 <div class="col-sm-8">

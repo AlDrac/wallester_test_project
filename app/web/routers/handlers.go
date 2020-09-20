@@ -111,18 +111,76 @@ func customersHandler(w http.ResponseWriter, r *http.Request) error {
 }
 
 func customerCreateHandler(w http.ResponseWriter, r *http.Request) error {
-	//data := make(map[string]interface{})
-	//err := serviceTemplate.RenderTemplate(w, "customer_create.tmpl", TemplateData{
-	//	Page: "customer_create",
-	//	Data: data,
-	//})
-	//if err != nil {
-	//	return err
-	//}
+	data := make(map[string]interface{})
+
+	suF, _ := getFlashesSuccess(w, r)
+	if suF != nil {
+		data[successType] = suF
+	}
+	erF, _ := getFlashesError(w, r)
+	if erF != nil {
+		data[errorType] = erF
+	}
+
+	if err := r.ParseForm(); err != nil {
+		return err
+	}
+	if r.FormValue("first_name") != "" ||
+		r.FormValue("last_name") != "" ||
+		r.FormValue("birth_date") != "" ||
+		r.FormValue("gender") != "" ||
+		r.FormValue("email") != "" ||
+		r.FormValue("address") != "" ||
+		r.FormValue("password") != "" {
+		customer := models.Customer{}
+		customer.FirstName = r.FormValue("first_name")
+		customer.LastName = r.FormValue("last_name")
+		customer.BirthDate = r.FormValue("birth_date")
+		customer.Gender = r.FormValue("gender")
+		customer.Email = r.FormValue("email")
+		customer.Address = r.FormValue("address")
+		customer.Password = r.FormValue("password")
+		data["formData"] = customer
+	}
+
+	if err := serviceTemplate.RenderTemplate(w, "customer_create.tmpl", TemplateData{
+		Page: "customer_create",
+		Data: data,
+	}); err != nil {
+		return err
+	}
+
 	return nil
 }
 
 func customerPostCreateHandler(w http.ResponseWriter, r *http.Request) error {
+	if err := r.ParseForm(); err != nil {
+		return err
+	}
+	customer := models.Customer{}
+	customer.FirstName = r.FormValue("first_name")
+	customer.LastName = r.FormValue("last_name")
+	customer.BirthDate = r.FormValue("birth_date")
+	customer.Gender = r.FormValue("gender")
+	customer.Email = r.FormValue("email")
+	customer.Address = r.FormValue("address")
+	customer.Password = r.FormValue("password")
+
+	if err := serviceApi.CreateCustomer(customer); err != nil {
+		if err := setFlashes(w, r, errorType, err.Error()); err != nil {
+			return err
+		}
+		if err := customerCreateHandler(w, r); err != nil {
+			return err
+		}
+		return nil
+	}
+
+	if err := setFlashes(w, r, successType, "The customer "+customer.FirstName+" "+customer.LastName+" was created"); err != nil {
+		return err
+	}
+	http.Redirect(w, r, "/customers", http.StatusFound)
+
 	return nil
 }
 

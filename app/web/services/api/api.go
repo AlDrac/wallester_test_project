@@ -87,3 +87,11 @@ func UpdateCustomer(customer models.Customer, id string) error {
 	}
 	return nil
 }
+
+func CreateCustomer(customer models.Customer) error {
+	result := getFromApiCustomer("/customer/create", http.MethodPost, customer)
+	if result.Error != "" {
+		return errors.New(result.Message)
+	}
+	return nil
+}

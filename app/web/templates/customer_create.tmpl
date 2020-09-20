@@ -1,9 +1,87 @@
-{{define "title"}}Customers{{end}}
+{{define "title"}}Customer create{{end}}
 
 {{define "title_content"}}{{end}}
 
 {{define "content"}}
-    <div class="row">
-        Create
+    <div id="legend">
+        <legend><a href="/customers">Customers</a> -> Create</legend>
     </div>
+
+    <div class="row col-md-12">
+        <form class="col-md-12 form-horizontal" action="/customer/create" method="post" autocomplete="off">
+            <div class="form-group row">
+                <label for="first_name" class="col-sm-4 col-form-label">First name</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" id="first_name" name="first_name" value="{{ if .Data.formData }}{{ .Data.formData.FirstName }}{{ end }}">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="last_name" class="col-sm-4 col-form-label">Last name</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" id="last_name" name="last_name" value="{{ if .Data.formData }}{{ .Data.formData.LastName }}{{ end }}">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="birth_date" class="col-sm-4 col-form-label">Birth date</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" id="birth_date" name="birth_date" value="{{ if .Data.formData }}{{ .Data.formData.BirthDate }}{{ end }}">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="gender" class="col-sm-4 col-form-label">Gender</label>
+                <div class="col-sm-8">
+                    <select id="gender" name="gender" class="form-control">
+                        <option>Choose...</option>
+                        <option value="male"{{ if .Data.formData }}{{ if eq .Data.formData.Gender "male" }} selected{{ end }}{{ end }}>Male</option>
+                        <option value="female"{{ if .Data.formData }}{{ if eq .Data.formData.Gender "female" }} selected{{ end }}{{ end }}>Female</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="email" class="col-sm-4 col-form-label">Email</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" id="email" name="email" value="{{ if .Data.formData }}{{ .Data.formData.Email }}{{ end }}">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="address" class="col-sm-4 col-form-label">Address</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" id="address" name="address" value="{{ if .Data.formData }}{{ .Data.formData.Address }}{{ end }}">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="password" class="col-sm-4 col-form-label">Password</label>
+                <div class="col-sm-8">
+                    <input type="text" readonly class="form-control-plaintext" id="password" name="password" value="{{ if .Data.formData }}{{ .Data.formData.Password }}{{ end }}">
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <button type="submit" class="btn btn-success">Create</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function generatePassword() {
+            var length = 8,
+                charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+                retVal = "";
+            for (var i = 0, n = charset.length; i < length; ++i) {
+                retVal += charset.charAt(Math.floor(Math.random() * n));
+            }
+            document.getElementById("password").value = retVal
+        }
+    </script>
+    {{ if .Data.formData }}
+        {{ if eq .Data.formData.Password "" }}
+            <script>
+                generatePassword()
+            </script>
+        {{ end }}
+    {{ else }}
+        <script>
+            generatePassword()
+        </script>
+    {{ end }}
 {{end}}
