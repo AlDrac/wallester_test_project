@@ -50,8 +50,10 @@ func (c *Controller) Handler(action Action) http.HandlerFunc {
 				boom.NotFound(writer, err)
 			} else if err == repositories.ErrRecordExist {
 				boom.NotAcceptable(writer, err)
-			} else {
+			} else if err.Error() == "Internal Server Error" {
 				boom.Internal(writer, err)
+			} else {
+				boom.BadRequest(writer, err)
 			}
 		}
 	})

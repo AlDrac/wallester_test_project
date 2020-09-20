@@ -26,8 +26,17 @@ func InitializeServiceApi(aU string) {
 	apiUrl = aU
 }
 
-func getFromApi(url string, method string, data map[string]string) ResStruct {
+func getFromApiData(url string, method string, data map[string]string) ResStruct {
 	jsonStr, _ := json.Marshal(data)
+	return getFromApi(url, method, jsonStr)
+}
+
+func getFromApiCustomer(url string, method string, data models.Customer) ResStruct {
+	jsonStr, _ := json.Marshal(data)
+	return getFromApi(url, method, jsonStr)
+}
+
+func getFromApi(url string, method string, jsonStr []byte) ResStruct {
 	r, err := http.NewRequest(method, apiUrl+url, bytes.NewBuffer(jsonStr))
 	if err != nil {
 		fmt.Println(err)
@@ -46,7 +55,7 @@ func GetCustomers(vars map[string]string) interface{} {
 	data := make(map[string]string)
 	data["first_name"] = vars["first_name"]
 	data["last_name"] = vars["last_name"]
-	result := getFromApi("/customers", http.MethodGet, data)
+	result := getFromApiData("/customers", http.MethodGet, data)
 	if result.Error != "" {
 		return make([]models.Customer, 0)
 	}
@@ -55,18 +64,26 @@ func GetCustomers(vars map[string]string) interface{} {
 
 func GetCustomer(id string) (interface{}, error) {
 	data := make(map[string]string)
-	result := getFromApi("/customer/"+id, http.MethodGet, data)
+	result := getFromApiData("/customer/"+id, http.MethodGet, data)
 	if result.Error != "" {
 		return models.Customer{}, errors.New(result.Message)
 	}
 	return result.Result, nil
 }
 
-func DeleteCustomer(id string) (interface{}, error) {
+func DeleteCustomer(id string) error {
 	data := make(map[string]string)
-	result := getFromApi("/customer/delete/"+id, http.MethodDelete, data)
+	result := getFromApiData("/customer/delete/"+id, http.MethodDelete, data)
 	if result.Error != "" {
-		return nil, errors.New(result.Message)
+		return errors.New(result.Message)
 	}
-	return result.Result, nil
+	return nil
+}
+
+func UpdateCustomer(customer models.Customer, id string) error {
+	result := getFromApiCustomer("/customer/edit/"+id, http.MethodPut, customer)
+	if result.Error != "" {
+		return errors.New(result.Message)
+	}
+	return nil
 }

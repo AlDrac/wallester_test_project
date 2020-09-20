@@ -9,7 +9,6 @@ import (
 	"github.com/gorilla/sessions"
 	"net/http"
 	"strconv"
-	"time"
 )
 
 const (
@@ -112,14 +111,14 @@ func customersHandler(w http.ResponseWriter, r *http.Request) error {
 }
 
 func customerCreateHandler(w http.ResponseWriter, r *http.Request) error {
-	data := make(map[string]interface{})
-	err := serviceTemplate.RenderTemplate(w, "customer_create.tmpl", TemplateData{
-		Page: "customer_create",
-		Data: data,
-	})
-	if err != nil {
-		return err
-	}
+	//data := make(map[string]interface{})
+	//err := serviceTemplate.RenderTemplate(w, "customer_create.tmpl", TemplateData{
+	//	Page: "customer_create",
+	//	Data: data,
+	//})
+	//if err != nil {
+	//	return err
+	//}
 	return nil
 }
 
@@ -161,6 +160,29 @@ func customerViewHandler(w http.ResponseWriter, r *http.Request) error {
 func customerEditHandler(w http.ResponseWriter, r *http.Request) error {
 	data := make(map[string]interface{})
 
+	suF, _ := getFlashesSuccess(w, r)
+	if suF != nil {
+		data[successType] = suF
+	}
+	erF, _ := getFlashesError(w, r)
+	if erF != nil {
+		data[errorType] = erF
+	}
+
+	if err := r.ParseForm(); err != nil {
+		return err
+	}
+	if r.FormValue("id") != "" {
+		customer := models.Customer{}
+		customer.FirstName = r.FormValue("first_name")
+		customer.LastName = r.FormValue("last_name")
+		customer.BirthDate = r.FormValue("birth_date")
+		customer.Gender = r.FormValue("gender")
+		customer.Email = r.FormValue("email")
+		customer.Address = r.FormValue("address")
+		data["formData"] = customer
+	}
+
 	customer, err := serviceApi.GetCustomer(mux.Vars(r)["id"])
 	if err != nil {
 		if err := setFlashes(w, r, errorType, err.Error()); err != nil {
@@ -170,6 +192,7 @@ func customerEditHandler(w http.ResponseWriter, r *http.Request) error {
 		return nil
 	}
 	data["customer"] = customer
+
 	if err := serviceTemplate.RenderTemplate(w, "customer_edit.tmpl", TemplateData{
 		Page: "customer_edit",
 		Data: data,
@@ -188,26 +211,33 @@ func customerPostEditHandler(w http.ResponseWriter, r *http.Request) error {
 	customer.ID, _ = strconv.Atoi(r.FormValue("id"))
 	customer.FirstName = r.FormValue("first_name")
 	customer.LastName = r.FormValue("last_name")
-
-	t, err := time.Parse(time.RFC3339, r.FormValue("birth_date")+"T00:00:00Z")
-	if err != nil {
-		return err
-	}
-
-	customer.BirthDate = t
+	customer.BirthDate = r.FormValue("birth_date")
 	customer.Gender = r.FormValue("gender")
 	customer.Email = r.FormValue("email")
 	customer.Address = r.FormValue("address")
 
-	fmt.Println("%v", customer)
+	if err := serviceApi.UpdateCustomer(customer, mux.Vars(r)["id"]); err != nil {
+		if err := setFlashes(w, r, errorType, err.Error()); err != nil {
+			return err
+		}
+		if err := customerEditHandler(w, r); err != nil {
+			return err
+		}
+		return nil
+	}
+
+	if err := setFlashes(w, r, successType, "The customer has been updated (#"+mux.Vars(r)["id"]+")"); err != nil {
+		return err
+	}
+	http.Redirect(w, r, "/customer/"+mux.Vars(r)["id"], http.StatusFound)
 
 	return nil
 }
 
 func customerDeleteHandler(w http.ResponseWriter, r *http.Request) error {
 	fmt.Println(mux.Vars(r)["id"])
-	_, err := serviceApi.DeleteCustomer(mux.Vars(r)["id"])
-	if err != nil {
+
+	if err := serviceApi.DeleteCustomer(mux.Vars(r)["id"]); err != nil {
 		if err := setFlashes(w, r, errorType, err.Error()); err != nil {
 			return err
 		}

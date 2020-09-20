@@ -84,7 +84,6 @@ func (c CustomerController) Edit(writer http.ResponseWriter, request *http.Reque
 	if err := json.NewDecoder(request.Body).Decode(req); err != nil {
 		return err
 	}
-
 	if err := c.repository.Customer().Edit(req); err != nil {
 		return err
 	}

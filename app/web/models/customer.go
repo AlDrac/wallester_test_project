@@ -6,7 +6,7 @@ type Customer struct {
 	ID               int       `json:"id"`
 	FirstName        string    `json:"first_name"`
 	LastName         string    `json:"last_name"`
-	BirthDate        time.Time `json:"birth_date" time_format:"sql_date"`
+	BirthDate        string    `json:"birth_date" time_format:"sql_date"`
 	Gender           string    `json:"gender"`
 	Email            string    `json:"email"`
 	Password         string    `json:"password,omitempty"`
