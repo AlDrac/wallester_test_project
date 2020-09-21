@@ -1,0 +1,22 @@
+version: '3.2'
+
+services:
+  api:
+    command:
+      [
+          "/bin/bash",
+          "-c",
+          "sleep 10 &&
+          make &&
+          tail -F anything"
+      ]
+
+  web:
+    command:
+      [
+          "/bin/bash",
+          "-c",
+          "sleep 10 &&
+          make &&
+          tail -F anything"
+      ]
