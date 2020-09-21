@@ -76,6 +76,14 @@ services:
     working_dir: /go/src/app
     volumes:
       - ./app/web:/go/src/app
+    command:
+      [
+          "/bin/bash",
+          "-c",
+          "sleep 10 &&
+          make &&
+          tail -F anything"
+      ]
     environment:
       - HTTP_PORT=${PROJECT_WEB_PORT}
       - HTTP_API_PORT=${PROJECT_API_PORT}
